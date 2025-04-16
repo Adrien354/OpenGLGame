@@ -1,0 +1,23 @@
+# Ignore Visual Studio files in OpenGL directory
+OpenGL/.vs/
+OpenGL/*.vcxproj*
+OpenGL/*.sln
+OpenGL/*.obj
+OpenGL/*.pdb
+OpenGL/*.idb
+OpenGL/*.ipch
+OpenGL/*.aps
+OpenGL/*.user
+OpenGL/*.opendb
+OpenGL/*.tlog
+OpenGL/*.log
+OpenGL/Debug/
+OpenGL/Release/
+OpenGL/x64/
+OpenGL/x86/
+OpenGL/*.cache
+OpenGL/CMakeFiles/
+OpenGL/CMakeCache.txt
+OpenGL/Makefile
+OpenGL/*.dir/
+
