@@ -1,8 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "shader_c.h"
-#include "stb_image.h"
+#include "shaderLoader/shader_c.h"
+#include "stb_image/stb_image.h"
 
 #include <iostream>
 #include <algorithm>
@@ -60,7 +60,7 @@ int main()
 
 	// load and generate the texture
 	int width, height, nrChannels;
-	unsigned char* data = stbi_load("container.jpg", &width, &height,
+	unsigned char* data = stbi_load("../resources/textures/container.jpg", &width, &height,
 		&nrChannels, 0);
 	if (data)
 	{
@@ -82,7 +82,7 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	data = stbi_load("images/awesomeface.png", &width, &height,
+	data = stbi_load("../resources/textures/awesomeface.png", &width, &height,
 		&nrChannels, 0);
 	if (data)
 	{
@@ -97,7 +97,7 @@ int main()
 
 	// build and compile our shader program
 	// ------------------------------------
-	Shader ourShader("shader.vs", "shader.fs"); // you can name your shader files however you like
+	Shader ourShader("../resources/shaders/shader.vs", "../resources/shaders/shader.fs"); // you can name your shader files however you like
 
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	// ------------------------------------------------------------------
