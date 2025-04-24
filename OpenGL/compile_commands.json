@@ -9,10 +9,10 @@
       "OpenGL",
       "-std=c++17",
       "-I../resources/",
-      "backpack.cpp"
+      "depth_testing.cpp"
     ],
     "directory": "/Users/adi/Nauka/GameProgramming/OpenGL/OpenGL",
-    "file": "/Users/adi/Nauka/GameProgramming/OpenGL/OpenGL/backpack.cpp"
+    "file": "/Users/adi/Nauka/GameProgramming/OpenGL/OpenGL/depth_testing.cpp"
   },
   {
     "arguments": [

@@ -105,7 +105,7 @@ int main()
 
 		// render
 		// ------
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// don't forget to enable shader before setting uniforms
@@ -121,8 +121,8 @@ int main()
 
 		ourShader.setVec3("pointLight.position", glm::vec3(view * glm::vec4(glm::vec3(-1.2f, 0.4f, 2.0f), 1.0f)));
 		ourShader.setVec3("pointLight.ambient", glm::vec3(0.8f, 0.6f, 0.3f)*0.1f);
-		ourShader.setVec3("pointLight.diffuse", glm::vec3(1.0f, 0.6f, 0.0f));
-		ourShader.setVec3("pointLight.specular", glm::vec3(1.0f, 0.6f, 0.0f));
+		ourShader.setVec3("pointLight.diffuse", glm::vec3(0.6f, 0.6f, 0.6f));
+		ourShader.setVec3("pointLight.specular", glm::vec3(0.8f, 0.8f, 0.8f));
 		ourShader.setFloat("pointLight.constant", 1.0f);
 		ourShader.setFloat("pointLight.linear", 0.09f);
 		ourShader.setFloat("pointLight.quadratic", 0.032f);
