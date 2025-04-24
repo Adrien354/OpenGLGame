@@ -6,9 +6,15 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <stb_image/stb_image.h>
+#ifdef _WIN32
+#include <assimpWindows/Importer.hpp>
+#include <assimpWindows/scene.h>
+#include <assimpWindows/postprocess.h>
+#else
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#endif
 
 #include <learnopengl/mesh.h>
 #include <shaderLoader/shader_c.h>
