@@ -1,0 +1,47 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-c",
+      "-I../includes",
+      "-I/opt/homebrew/include",
+      "-framework",
+      "OpenGL",
+      "-std=c++17",
+      "-I../resources/",
+      "backpack.cpp"
+    ],
+    "directory": "/Users/adi/Nauka/GameProgramming/OpenGL/OpenGL",
+    "file": "/Users/adi/Nauka/GameProgramming/OpenGL/OpenGL/backpack.cpp"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-c",
+      "-I../includes",
+      "-I/opt/homebrew/include",
+      "-framework",
+      "OpenGL",
+      "-std=c++17",
+      "-I../resources/",
+      "../src/glad.c"
+    ],
+    "directory": "/Users/adi/Nauka/GameProgramming/OpenGL/OpenGL",
+    "file": "/Users/adi/Nauka/GameProgramming/OpenGL/src/glad.c"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-c",
+      "-I../includes",
+      "-I/opt/homebrew/include",
+      "-framework",
+      "OpenGL",
+      "-std=c++17",
+      "-I../resources/",
+      "../includes/stb_image/stb_image.cpp"
+    ],
+    "directory": "/Users/adi/Nauka/GameProgramming/OpenGL/OpenGL",
+    "file": "/Users/adi/Nauka/GameProgramming/OpenGL/includes/stb_image/stb_image.cpp"
+  }
+]

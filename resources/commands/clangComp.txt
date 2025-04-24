@@ -1,0 +1,1 @@
+bear -- bash -c "clang++ LightScene.cpp ../src/glad.c ../includes/stb_image/stb_image.cpp -I../includes -I/opt/homebrew/include -L/opt/homebrew/lib -lglfw -framework OpenGL -std=c++17 -I../resources/"
