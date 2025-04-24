@@ -97,6 +97,8 @@ int main()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
+    std::cout << "FPS: " << 1.0f / deltaTime << std::endl;
+
 		// input
 		// -----
 		processInput(window);
