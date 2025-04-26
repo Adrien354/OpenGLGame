@@ -16,7 +16,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
-unsigned int loadTexture(const char *path);
+unsigned int myLoadTexture(const char *path, GLint wrapParam = GL_REPEAT);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -72,52 +72,65 @@ int main(){
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    Shader shader("../resources/shaders/depth_testing/depth_testing.vs", "../resources/shaders/depth_testing/depth_testing.fs");
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    //blending
+    glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
+    glFrontFace(GL_CCW);
 
-    float cubeVertices[] = {
-        // positions          // texture Coords
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    Shader shader("../resources/shaders/blending/blending.vs", "../resources/shaders/blending/blending.fs");
 
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	float vertices[] = {
+		// back face
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // bottom-left
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, // bottom-right
+        0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // top-right
+		0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // top-right
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, // top-left
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // bottom-left
+		// front face
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom-left
+		0.5f, 0.5f, 0.5f, 1.0f, 1.0f, // top-right
+        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, // bottom-right
+		0.5f, 0.5f, 0.5f, 1.0f, 1.0f, // top-right   
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom-left
+         -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, // top-left
+		// left face
+		-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // top-right
+		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // bottom-left
+        -0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // top-left
+		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // bottom-left
+		-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // top-right
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom-right
+		// right face
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // top-left
+		0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // top-right
+        0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // bottom-right
+		0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // bottom-right
+		0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom-left
+        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // top-left
+		// bottom face
+		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // top-right
+		0.5f, -0.5f, 0.5f, 1.0f, 0.0f, // bottom-left
+        0.5f, -0.5f, -0.5f, 1.0f, 1.0f, // top-left
+		0.5f, -0.5f, 0.5f, 1.0f, 0.0f, // bottom-left
+		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // top-right
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom-right
+		// top face
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, // top-left
+		0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // top-right
+        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // bottom-right
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // bottom-right
+		-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, // bottom-left
+        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, // top-left
+	};
 
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-    };
     float planeVertices[] = {
         // positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
          5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
@@ -126,15 +139,26 @@ int main(){
 
          5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
         -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-         5.0f, -0.5f, -5.0f,  2.0f, 2.0f								
+         5.0f, -0.5f, -5.0f,  2.0f, 2.0f,								
     };
+	float transparentVertices[] = {
+		// positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
+		0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+		0.0f, -0.5f,  0.0f,  0.0f,  1.0f,
+		1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+
+		0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+		1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+		1.0f,  0.5f,  0.0f,  1.0f,  0.0f
+	};
+
     // cube VAO
     unsigned int cubeVAO, cubeVBO;
     glGenVertexArrays(1, &cubeVAO);
     glGenBuffers(1, &cubeVBO);
     glBindVertexArray(cubeVAO);
     glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
@@ -153,10 +177,34 @@ int main(){
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glBindVertexArray(0);
 
-    unsigned int cubeTexture = loadTexture("../resources/textures/marble.jpg");
-    unsigned int floorTexture = loadTexture("../resources/textures/metal.png");
+    unsigned int vegetatationVAO, vegetationVBO;
+    glGenVertexArrays(1, &vegetatationVAO);
+    glGenBuffers(1, &vegetationVBO);
+    glBindVertexArray(vegetatationVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, vegetationVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), transparentVertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3*sizeof(float)));
+    glEnableVertexAttribArray(1);
+    glBindVertexArray(0);
 
-     shader.use();
+    unsigned int cubeTexture = myLoadTexture("../resources/textures/marble.jpg");
+    unsigned int floorTexture = myLoadTexture("../resources/textures/metal.png");
+    unsigned int grassTexture = myLoadTexture("../resources/textures/blending_transparent_window.png", GL_CLAMP_TO_EDGE);
+
+	vector<glm::vec3> vegetation
+	{
+		glm::vec3(-1.5f, 0.0f, -0.48f),
+		glm::vec3(1.5f, 0.0f, 0.51f),
+		glm::vec3(0.0f, 0.0f, 0.7f),
+		glm::vec3(-0.3f, 0.0f, -2.3f),
+		glm::vec3(0.5f, 0.0f, -0.6f)
+	};
+
+    
+
+    shader.use();
     shader.setInt("texture1", 0);
 
     // render loop
@@ -176,7 +224,13 @@ int main(){
         // render
         // ------
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        std::map<float, glm::vec3> sorted;
+        for (unsigned int i = 0; i < vegetation.size(); i++) {
+            float distance = glm::length(camera.Position - vegetation[i]);
+            sorted[distance] = vegetation[i];
+        }
 
         shader.use();
         glm::mat4 model = glm::mat4(1.0f);
@@ -184,22 +238,35 @@ int main(){
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         shader.setMat4("view", view);
         shader.setMat4("projection", projection);
+		//// floor
+		//glBindVertexArray(planeVAO);
+  //      glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, floorTexture);
+		//shader.setMat4("model", glm::mat4(1.0f));
+		//glDrawArrays(GL_TRIANGLES, 0, 6);
+
         // cubes
         glBindVertexArray(cubeVAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, cubeTexture); 	
+        glBindTexture(GL_TEXTURE_2D, cubeTexture); 
         model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
         shader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-        shader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        // floor
-        glBindVertexArray(planeVAO);
-        glBindTexture(GL_TEXTURE_2D, floorTexture);
-        shader.setMat4("model", glm::mat4(1.0f));
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        //model = glm::mat4(1.0f);
+        //model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+        //shader.setMat4("model", model);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //Vegetation
+
+        //glBindVertexArray(vegetatationVAO);
+        //glBindTexture(GL_TEXTURE_2D, grassTexture);
+        //for (std::map<float, glm::vec3>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) {
+        //    model = glm::mat4(1.f);
+        //    model = glm::translate(model, it->second);
+        //    shader.setMat4("model", model);
+        //    glDrawArrays(GL_TRIANGLES, 0, 6);
+        //}
+
         glBindVertexArray(0);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -273,7 +340,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 // utility function for loading a 2D texture from file
 // ---------------------------------------------------
-unsigned int loadTexture(char const *path)
+unsigned int myLoadTexture(char const *path, GLint wrapParam)
 {
     unsigned int textureID;
     glGenTextures(1, &textureID);
@@ -282,7 +349,7 @@ unsigned int loadTexture(char const *path)
     unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
     if (data)
     {
-        GLenum format;
+        GLenum format = GL_RGB;
         if (nrComponents == 1)
             format = GL_RED;
         else if (nrComponents == 3)
@@ -294,8 +361,8 @@ unsigned int loadTexture(char const *path)
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapParam);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapParam);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
