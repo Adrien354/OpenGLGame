@@ -30,11 +30,14 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = (float)SCR_WIDTH / 2.0;
 float lastY = (float)SCR_HEIGHT / 2.0;
 bool firstMouse = true;
-float heightScale = 0.1f;
+bool shadows = true;
+bool shadowsKeyPressed = false;
 
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+unsigned int planeVAO;
 
 int main()
 {
@@ -78,19 +81,18 @@ int main()
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 
 	// build and compile shaders
 	// -------------------------
-	Shader shader("../resources/shaders/parallax_mapping.vs", "../resources/shaders/parallax_mapping.fs");
+	Shader shader("../resources/shaders/normal_mapping/normal_mapping.vs", "../resources/shaders/normal_mapping/normal_mapping.fs");
 
-	unsigned int diffuseMap = loadTexture("../resources/textures/bricks2.jpg");
-	unsigned int normalMap = loadTexture("../resources/textures/bricks2_normal.jpg");
-  unsigned int heightMap = loadTexture("../resources/textures/bricks2_disp.jpg");
+	unsigned int diffuseMap = loadTexture("../resources/textures/brickwall.jpg");
+	unsigned int normalMap = loadTexture("../resources/textures/brickwall_normal.jpg");
 
 	shader.use();
 	shader.setInt("diffuseMap", 0);
 	shader.setInt("normalMap", 1);
-  shader.setInt("depthMap", 2);
 
 	glm::vec3 lightPos(0.5f, 1.0f, 0.3f);
 
@@ -103,6 +105,8 @@ int main()
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+
+		std::cout << "FPS: " << (int)(1.0f / deltaTime) << std::endl;
 
 		// input
 		// -----
@@ -119,17 +123,14 @@ int main()
 		shader.setMat4("view", view);
 		// render normal-mapped quad
 		glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model, glm::radians((float)glfwGetTime() * -10.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+    model = glm::translate(model, glm::vec3(0.0, 0.5f, -.5f));
 		shader.setMat4("model", model);
 		shader.setVec3("viewPos", camera.Position);
 		shader.setVec3("lightPos", lightPos);
-    shader.setFloat("heightScale", heightScale);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, normalMap);
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, heightMap);
 		renderQuad();
 
 		// render light source (simply re-renders a smaller plane at the light's position for debugging/visualization)
@@ -257,7 +258,17 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !shadowsKeyPressed)
+	{
+		shadows = !shadows;
+		shadowsKeyPressed = true;
+	}
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
+	{
+		shadowsKeyPressed = false;
+	}
 }
+
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)

@@ -9,10 +9,10 @@
       "OpenGL",
       "-std=c++17",
       "-I../resources/",
-      "depth_testing.cpp"
+      "hdr.cpp"
     ],
     "directory": "/Users/adi/Nauka/GameProgramming/OpenGL/OpenGL",
-    "file": "/Users/adi/Nauka/GameProgramming/OpenGL/OpenGL/depth_testing.cpp"
+    "file": "/Users/adi/Nauka/GameProgramming/OpenGL/OpenGL/hdr.cpp"
   },
   {
     "arguments": [
